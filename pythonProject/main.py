@@ -12,62 +12,46 @@ if __name__ == '__main__':
     ship = Ship()
 
     running = True
-    ground = False
+    start_vis = False
+    level = "menu"
+
     down = False
     up = False
     left = False
     righ = False
-    level = 0
 
     while running:
         pygame.display.flip()
         if level == "1_lvl":
             draw_space(screen)
             ship.draw_ship(screen)
-        if not ground:
-            menu.menu(screen, False)
-            ground = True
-            level = "menu"
-        if down:
-            ship.go_down()
-        if up:
-            ship.go_up()
-        if left:
-            ship.go_left()
-        if righ:
-            ship.go_right()
+        if level == "menu":
+            menu.menu(screen, start_vis)
+        ship.go_to(righ, left, up, down)
+        ship.change_bullets(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if level == "menu" and event.type == pygame.MOUSEMOTION:
-                if menu.star_game_polygon.collidepoint(event.pos):
-                    menu.menu(screen,True)
-                else:
-                    menu.menu(screen, False)
+                start_vis = True if menu.star_game_polygon.collidepoint(event.pos) else False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if level == "menu" and menu.star_game_polygon.collidepoint(event.pos):
                     level = "1_lvl"
                     draw_space(screen)
                     ship.draw_ship(screen)
+                if level != "menu":
+                    ship.shot()
             if event.type == pygame.KEYDOWN:
-                if level != "menu" and event.key == pygame.K_s:
-                    down = True
-                if level != "menu" and event.key == pygame.K_w:
-                    up = True
-                if level != "menu" and event.key == pygame.K_d:
-                    righ = True
-                if level != "menu" and event.key == pygame.K_a:
-                    left = True
+                if level != "menu":
+                    down = event.key == pygame.K_s or down
+                    up = event.key == pygame.K_w or up
+                    righ = event.key == pygame.K_d or righ
+                    left = event.key == pygame.K_a or left
             if event.type == pygame.KEYUP:
-                if level != "menu" and event.key == pygame.K_s:
-                    down = False
-                if level != "menu" and event.key == pygame.K_w:
-                    up = False
-                if level != "menu" and event.key == pygame.K_d:
-                    righ = False
-                if level != "menu" and event.key == pygame.K_a:
-                    left = False
-
-
+                if level != "menu":
+                    down = False if event.key == pygame.K_s else down
+                    up = False if event.key == pygame.K_w else up
+                    righ = False if event.key == pygame.K_d else righ
+                    left = False if event.key == pygame.K_a else left
     pygame.quit()
