@@ -1,5 +1,3 @@
-from tabnanny import check
-
 import pygame
 import random
 stars = []
@@ -60,17 +58,30 @@ class Ship:
     def shot(self):
         self.bullets.append(Bullet(self.x + 30, self.y + 70))
 
-    def change_bullets(self, screen):
-        self.check_bullets()
+    def change_bullets(self, screen, sheep=False):
+        self.check_bullets(sheep)
         for i in self.bullets:
             i.button_motion(screen)
 
-    def check_bullets(self):
+    def check_bullets(self, sheep):
         k = []
-        for i in self.bullets:
-            if i.check() < 1400:
-                k.append(i)
+        if sheep:
+            for i in self.bullets:
+                if i.check()[0] < 1400 and not(sheep.ret_p().collidepoint(i.check())):
+                    k.append(i)
+                elif sheep.ret_p().collidepoint(i.check()):
+                    sheep.dammaged()
+        else:
+            for i in self.bullets:
+                if i.check()[0] < 1400:
+                    k.append(i)
         self.bullets = k
+
+    def dammaged(self):
+        self.hp -= 20
+
+    def ret_hp(self):
+        return self.hp
 
 class Bullet:
     def __init__(self, x, y):
@@ -84,7 +95,7 @@ class Bullet:
         pygame.draw.rect(screen, "White", (self.x, self.y, 15, 5))
 
     def check(self):
-        return self.x
+        return [self.x, self.y]
 
 
 class Sniper:
@@ -93,8 +104,77 @@ class Sniper:
         self.x = x
         self.y = y
         self.sniper_polygon = pygame.Rect(x, y, 120, 46)
-        self.hp = 200
+        self.hp = 140
         self.bullets = []
 
     def draw_ship(self, screen):
         screen.blit(self.sniper_image, (self.x, self.y))
+
+    def shot(self):
+        if random.randint(1, 1001) <= 3:
+            self.bullets.append(Anti_Bullet(self.x, self.y + 40))
+
+    def change_bullets(self, screen, sheep):
+        self.check_bullets(sheep)
+        for i in self.bullets:
+            i.button_motion(screen)
+
+    def check_bullets(self, sheep):
+        k = []
+        for i in self.bullets:
+            if i.check()[0] > 0 and not(sheep.ship_polygon.collidepoint(i.check())):
+                k.append(i)
+            elif sheep.ship_polygon.collidepoint(i.check()):
+                sheep.dammaged()
+        self.bullets = k
+
+    def dammaged(self):
+        self.hp -= 20
+
+    def ret_hp(self):
+        return self.hp
+
+    def ret_p(self):
+        return self.sniper_polygon
+
+
+class Anti_Bullet:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.button_poligon = pygame.Rect(self.x, self.y, 15, 5)
+
+    def button_motion(self, screen):
+        self.x -= 5
+        self.button_poligon = pygame.Rect(self.x, self.y, 15, 5)
+        pygame.draw.rect(screen, "Red", (self.x, self.y, 15, 5))
+
+    def check(self):
+        return [self.x, self.y]
+
+
+class Level_1:
+    def __init__(self):
+        self.wave_1 = [Sniper(1000, 100), Sniper(1000, 700), Sniper(1100, 250), Sniper(1100, 400), Sniper(1100, 550)]
+        self.wave_2 = [Sniper(700, 250), Sniper(700, 550), Sniper(700, 700), Sniper(1000, 350), Sniper(1000, 450)]
+        self.wave_3 = [Sniper(800, 150), Sniper(750, 350), Sniper(800, 500), Sniper(1000, 550), Sniper(1000, 700)]
+        self.wave_4 = [Sniper(1100, y) for y in range(50, 751, 100)]
+        self.waves = [self.wave_1, self.wave_2, self.wave_3, self.wave_4]
+    def stand_wave(self, screen, sheep):
+        for i in range(len(self.waves)):
+            if self.waves[i]:
+                k = []
+                for wrag in self.waves[i]:
+                    sheep.change_bullets(screen, wrag)
+                    if wrag.ret_hp() > 0:
+                        k.append(wrag)
+                self.waves[i] = k
+                for wrag in self.waves[i]:
+                    wrag.draw_ship(screen)
+                for wrag in self.waves[i]:
+                    wrag.shot()
+                for wrag in self.waves[i]:
+                    wrag.change_bullets(screen, sheep)
+                break
+            else:
+                sheep.change_bullets(screen)

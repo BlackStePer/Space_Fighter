@@ -14,6 +14,7 @@ if __name__ == '__main__':
     running = True
     start_vis = False
     level = "menu"
+    lvl = Level_1()
 
     down = False
     up = False
@@ -25,13 +26,13 @@ if __name__ == '__main__':
         if level == "1_lvl":
             draw_space(screen)
             ship.draw_ship(screen)
+            lvl.stand_wave(screen, ship)
         if level == "menu":
             menu.menu(screen, start_vis)
         ship.go_to(righ, left, up, down)
-        ship.change_bullets(screen)
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or ship.ret_hp() <= 0:
                 running = False
             if level == "menu" and event.type == pygame.MOUSEMOTION:
                 start_vis = True if menu.star_game_polygon.collidepoint(event.pos) else False
