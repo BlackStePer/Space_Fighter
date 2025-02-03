@@ -171,7 +171,7 @@ class Level1:
         self.wave_4 = [Sniper(1100, y) for y in range(50, 751, 100)]
         self.waves = [self.wave_1, self.wave_2, self.wave_3, self.wave_4]
 
-    def stand_wave(self, screen, sheep):
+    def stand_wave(self, screen, sheep, lvl):
         for i in range(len(self.waves)):
             if self.waves[i]:
                 k = []
@@ -193,6 +193,9 @@ class Level1:
                         wrag.check_bullets(sheep)
                 break
 
+    def check_waves(self):
+        return any(self.waves)
+
 
 class Level2(Level1):
     def __init__(self):
@@ -205,3 +208,12 @@ class Level2(Level1):
                        Breaker(1000, 150), Sniper(1100, 180),
                        Breaker(1000, 550), Sniper(1100, 580)]
         self.waves = [self.wave_1, self.wave_2, self.wave_3]
+
+
+class Level3(Level1):
+    def __init__(self):
+        self.wave_1 = ([Sniper(1100, y) for y in range(50, 751, 100)] +
+                       [Sniper(1000, 100), Sniper(1000, 700), Sniper(1100, 250),
+                       Sniper(1100, 400), Sniper(1100, 550), Sniper(700, 250), Sniper(700, 550),
+                       Sniper(700, 700), Sniper(1000, 350), Sniper(1000, 450)])
+        self.waves = [self.wave_1]
