@@ -1,7 +1,7 @@
 import pygame
 import random
 
-list_levels = [1, 2, 3]
+list_levels = [1, 2, 3, 4, 5]
 stars = []
 for _ in range(1400):
     star = (random.randint(0, 1400), random.randint(0, 800))
@@ -38,6 +38,8 @@ class LevelMenu:
     l1_polygon = pygame.Rect(100, 250, 200, 100)
     l2_polygon = pygame.Rect(600, 250, 200, 100)
     l3_polygon = pygame.Rect(1100, 250, 200, 100)
+    l4_polygon = pygame.Rect(350, 500, 200, 100)
+    l5_polygon = pygame.Rect(850, 500, 200, 100)
     def __init__(self):
         self.menu_image = pygame.image.load("images/menu.png")
 
@@ -45,25 +47,41 @@ class LevelMenu:
         self.l1 = self.l_font.render('Level 1', True, "White")
         self.l2 = self.l_font.render('Level 2', True, "White")
         self.l3 = self.l_font.render('Level 3', True, "White")
+        self.l4 = self.l_font.render('Level 4', True, "White")
+        self.l5 = self.l_font.render('Level 5', True, "White")
 
         self.main_font = pygame.font.Font("fonts/menu_f.ttf", 150)
         self.name_game = self.main_font.render('Change level', True, "White")
 
-    def menu(self, screen, l_1, l_2, l_3):
+    def menu(self, screen, l_1, l_2, l_3, l_4, l_5):
+        with open("Saves.txt", "r") as file:
+            op_lvls = file.read().strip()
         screen.blit(self.menu_image, (0, 0))
         screen.blit(self.name_game, (300, -10))
         if l_1:
             pygame.draw.rect(screen, (50, 50, 50), (100, 250, 200, 100))
-        if l_2:
+        if l_2 and len(op_lvls) >= 2:
             pygame.draw.rect(screen, (50, 50, 50), (600, 250, 200, 100))
-        if l_3:
+        if l_3 and len(op_lvls) >= 3:
             pygame.draw.rect(screen, (50, 50, 50), (1100, 250, 200, 100))
+        if l_4 and len(op_lvls) >= 4:
+            pygame.draw.rect(screen, (50, 50, 50), (350, 500, 200, 100))
+        if l_5 and len(op_lvls) >= 5:
+            pygame.draw.rect(screen, (50, 50, 50), (850, 500, 200, 100))
         pygame.draw.rect(screen, "White", (100, 250, 200, 100), 5)
-        pygame.draw.rect(screen, "White", (600, 250, 200, 100), 5)
-        pygame.draw.rect(screen, "White", (1100, 250, 200, 100), 5)
         screen.blit(self.l1, (120, 255))
-        screen.blit(self.l2, (620, 255))
-        screen.blit(self.l3, (1120, 255))
+        if len(op_lvls) >= 2:
+            pygame.draw.rect(screen, "White", (600, 250, 200, 100), 5)
+            screen.blit(self.l2, (620, 255))
+        if len(op_lvls) >= 3:
+            pygame.draw.rect(screen, "White", (1100, 250, 200, 100), 5)
+            screen.blit(self.l3, (1120, 255))
+        if len(op_lvls) >= 4:
+            pygame.draw.rect(screen, "White", (350, 500, 200, 100), 5)
+            screen.blit(self.l4, (370, 505))
+        if len(op_lvls) >= 5:
+            pygame.draw.rect(screen, "White", (850, 500, 200, 100), 5)
+            screen.blit(self.l5, (870, 505))
 
 class DethMenu:
     back_polygon = pygame.Rect(305, 465, 225, 150)

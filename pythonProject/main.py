@@ -24,12 +24,17 @@ if __name__ == '__main__':
     l1 = False
     l2 = False
     l3 = False
+    l4 = False
+    l5 = False
 
     level = "menu"
     pre_lvl = ""
     lvl1 = Level1()
     lvl2 = Level2()
     lvl3 = Level3()
+    lvl4 = Level4()
+    lvl5 = Level5()
+
 
     down = False
     up = False
@@ -41,28 +46,67 @@ if __name__ == '__main__':
         if level == "1_lvl":
             draw_space(screen)
             ship.draw_ship(screen)
-            lvl1.stand_wave(screen, ship, level)
+            lvl1.stand_wave(screen, ship)
             if not lvl1.check_waves():
                 pre_lvl = level
+                with open("Saves.txt", "r") as file:
+                    s = file.read().strip()
+                    if str(int(level[0]) + 1) not in s:
+                        with open("Saves.txt", "w") as f:
+                            f.write(s + str(int(level[0]) + 1))
                 level = "win_menu" if int(pre_lvl[0]) != max(list_levels) else "end_win_menu"
         elif level == "2_lvl":
             draw_space(screen)
             ship.draw_ship(screen)
-            lvl2.stand_wave(screen, ship, level)
+            lvl2.stand_wave(screen, ship)
             if not lvl2.check_waves():
                 pre_lvl = level
+                with open("Saves.txt", "r") as file:
+                    s = file.read().strip()
+                    if str(int(level[0]) + 1) not in s:
+                        with open("Saves.txt", "w") as f:
+                            f.write(s + str(int(level[0]) + 1))
                 level = "win_menu" if int(pre_lvl[0]) != max(list_levels) else "end_win_menu"
         elif level == "3_lvl":
             draw_space(screen)
             ship.draw_ship(screen)
-            lvl3.stand_wave(screen, ship, level)
+            lvl3.stand_wave(screen, ship)
             if not lvl3.check_waves():
                 pre_lvl = level
+                with open("Saves.txt", "r") as file:
+                    s = file.read().strip()
+                    if str(int(level[0]) + 1) not in s:
+                        with open("Saves.txt", "w") as f:
+                            f.write(s + str(int(level[0]) + 1))
+                level = "win_menu" if int(pre_lvl[0]) != max(list_levels) else "end_win_menu"
+        elif level == "4_lvl":
+            draw_space(screen)
+            ship.draw_ship(screen)
+            lvl4.stand_wave(screen, ship)
+            if not lvl4.check_waves():
+                pre_lvl = level
+                with open("Saves.txt", "r") as file:
+                    s = file.read().strip()
+                    if str(int(level[0]) + 1) not in s:
+                        with open("Saves.txt", "w") as f:
+                            f.write(s + str(int(level[0]) + 1))
+                level = "win_menu" if int(pre_lvl[0]) != max(list_levels) else "end_win_menu"
+        elif level == "5_lvl":
+            draw_space(screen)
+            ship.draw_ship(screen)
+            lvl5.stand_wave(screen, ship)
+            if not lvl5.check_waves():
+                pre_lvl = level
+                with open("Saves.txt", "r") as file:
+                    s = file.read().strip()
+                    if str(int(level[0]) + 1) not in s:
+                        with open("Saves.txt", "w") as f:
+                            f.write(s + str(int(level[0]) + 1))
                 level = "win_menu" if int(pre_lvl[0]) != max(list_levels) else "end_win_menu"
         elif level == "menu":
             menu.menu(screen, start_vis)
         elif level == "ch_lvl":
-            lev_menu.menu(screen, l1, l2, l3)
+            lev_menu.menu(screen, l1, l2, l3, l4, l5)
         elif level == "deth_menu":
             deth_menu.menu(screen, men, rest)
         elif level == "pause_menu":
@@ -84,38 +128,51 @@ if __name__ == '__main__':
                 l1 = True if lev_menu.l1_polygon.collidepoint(event.pos) and level == "ch_lvl" else False
                 l2 = True if lev_menu.l2_polygon.collidepoint(event.pos) and level == "ch_lvl" else False
                 l3 = True if lev_menu.l3_polygon.collidepoint(event.pos) and level == "ch_lvl" else False
+                l4 = True if lev_menu.l4_polygon.collidepoint(event.pos) and level == "ch_lvl" else False
+                l5 = True if lev_menu.l5_polygon.collidepoint(event.pos) and level == "ch_lvl" else False
                 men = True if (deth_menu.back_polygon.collidepoint(event.pos) and \
                                (level == "deth_menu" or level == "pause_menu" or level == "win_menu")) or \
                               (end_win_menu.back_polygon.collidepoint(event.pos) and level == "end_win_menu") else False
                 rest = True if deth_menu.rest_polygon.collidepoint(event.pos) and \
                                (level == "deth_menu" or level == "pause_menu" or level == "win_menu") else False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                with open("Saves.txt", "r") as file:
+                    op_lvls = file.read().strip()
                 if level == "menu" and menu.star_game_polygon.collidepoint(event.pos):
                     level = "ch_lvl"
                 elif level == "ch_lvl" and lev_menu.l1_polygon.collidepoint(event.pos):
                     level = "1_lvl"
-                elif level == "ch_lvl" and lev_menu.l2_polygon.collidepoint(event.pos):
+                elif level == "ch_lvl" and lev_menu.l2_polygon.collidepoint(event.pos) and len(op_lvls) >= 2:
                     level = "2_lvl"
-                elif level == "ch_lvl" and lev_menu.l3_polygon.collidepoint(event.pos):
+                elif level == "ch_lvl" and lev_menu.l3_polygon.collidepoint(event.pos) and len(op_lvls) >= 3:
                     level = "3_lvl"
+                elif level == "ch_lvl" and lev_menu.l4_polygon.collidepoint(event.pos) and len(op_lvls) >= 4:
+                    level = "4_lvl"
+                elif level == "ch_lvl" and lev_menu.l5_polygon.collidepoint(event.pos) and len(op_lvls) >= 5:
+                    level = "5_lvl"
                 elif (level == "deth_menu" or level == "pause_menu" or level == "win_menu") and \
                         deth_menu.back_polygon.collidepoint(event.pos):
                     ship = Ship()
                     lvl1 = Level1()
                     lvl2 = Level2()
                     lvl3 = Level3()
+                    lvl4 = Level4()
                     level = "menu"
                 elif level == "end_win_menu" and end_win_menu.back_polygon.collidepoint(event.pos):
                     ship = Ship()
                     lvl1 = Level1()
                     lvl2 = Level2()
                     lvl3 = Level3()
+                    lvl4 = Level4()
+                    lvl5 = Level5()
                     level = "menu"
                 elif level == "deth_menu" and deth_menu.rest_polygon.collidepoint(event.pos):
                     ship = Ship()
                     lvl1 = Level1()
                     lvl2 = Level2()
                     lvl3 = Level3()
+                    lvl4 = Level4()
+                    lvl5 = Level5()
                     level = pre_lvl
                 elif level == "pause_menu" and deth_menu.rest_polygon.collidepoint(event.pos):
                     level = pre_lvl
